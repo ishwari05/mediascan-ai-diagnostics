@@ -1,0 +1,410 @@
+/**
+ * DashboardPage.module.css
+ * Styles for pages/DashboardPage.js.
+ * Responsive at 768px (tablet) and 375px (mobile).
+ */
+
+@import '../styles/tokens.css';
+
+/* ── Page wrapper ────────────────────────────────────────────────────────── */
+.page {
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--space-12) 5vw;
+  animation: dashFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Welcome header ──────────────────────────────────────────────────────── */
+.welcomeSection {
+  margin-bottom: 52px;
+}
+
+.welcomeTitle {
+  font-size: 56px;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  margin-bottom: var(--space-3);
+  letter-spacing: -2px;
+}
+
+.welcomeSubtitle {
+  font-size: 24px;
+  color: var(--color-text-muted);
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+/* ── Stats grid ──────────────────────────────────────────────────────────── */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-6);
+  margin-bottom: var(--space-10);
+}
+
+.statCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 32px;
+  padding: var(--space-12) var(--space-10);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  min-height: 220px;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-spring), box-shadow var(--transition-spring);
+  cursor: default;
+}
+
+.statCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+  border-color: #bfdbfe;
+}
+
+.statIcon {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statLabel {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--color-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-top: var(--space-8);
+  margin-bottom: var(--space-4);
+  font-family: var(--font-body);
+}
+
+.statValue {
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  line-height: 1;
+  letter-spacing: -3px;
+}
+
+/* ── Main content two-column ─────────────────────────────────────────────── */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-8);
+}
+
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 32px;
+  padding: var(--space-12);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-10);
+}
+
+.cardTitle {
+  font-size: 40px;
+  font-weight: 900;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  letter-spacing: -1.5px;
+}
+
+.filterBtn {
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all var(--transition-fast);
+}
+
+.filterBtnActive {
+  background: var(--color-primary-light);
+  border-color: #bfdbfe;
+  color: var(--color-primary);
+}
+
+/* ── Scan CTA card ───────────────────────────────────────────────────────── */
+.scanCta {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-mid));
+  border-radius: 32px;
+  padding: 56px 48px;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 12px 30px var(--color-primary-ring);
+  transition: box-shadow var(--transition-base), transform var(--transition-fast);
+}
+
+.scanCta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px var(--color-primary-ring);
+}
+
+.scanCtaIcon {
+  width: 84px;
+  height: 84px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scanCtaTitle {
+  color: #fff;
+  font-weight: 900;
+  font-size: 42px;
+  font-family: var(--font-display);
+  letter-spacing: -1px;
+}
+
+.scanCtaSub {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 22px;
+  font-weight: 600;
+  font-family: var(--font-body);
+  margin-top: var(--space-1);
+}
+
+/* ── Recent activity items ───────────────────────────────────────────────── */
+.recentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-6) 0;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.recentItem:hover {
+  padding-left: var(--space-2);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+}
+
+.recentMeta {
+  font-size: 21px;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+}
+
+.recentIdBadge {
+  font-size: 18px;
+  font-weight: 900;
+  padding: var(--space-2) 18px;
+  border-radius: var(--radius-md);
+  background: var(--color-border-subtle);
+  color: var(--color-text-secondary);
+  font-family: var(--font-body);
+}
+
+.riskBadge {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-size: 21px;
+  font-weight: 1000;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--font-body);
+}
+
+.riskHigh   { background: var(--color-danger-light);  color: var(--color-danger);  }
+.riskMedium { background: var(--color-warning-light); color: var(--color-warning); }
+.riskLow    { background: var(--color-success-light); color: var(--color-success); }
+
+/* ── Clinical risk profile ───────────────────────────────────────────────── */
+.riskProfileGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--space-6);
+}
+
+.riskProfileCard {
+  padding: var(--space-8);
+  border-radius: var(--radius-xl);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.riskProfileIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.riskProfileLabel {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1e293b;
+  font-family: var(--font-display);
+}
+
+.riskProfileBadge {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-md);
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+/* ── Loading spinner ─────────────────────────────────────────────────────── */
+.loading {
+  padding: 80px;
+  text-align: center;
+}
+
+.loadingText {
+  margin-top: var(--space-6);
+  color: var(--color-text-muted);
+  font-size: 20px;
+  font-weight: 600;
+  font-family: var(--font-body);
+}
+
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+.emptyState {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-10);
+  text-align: center;
+}
+
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  margin-bottom: var(--space-2);
+}
+
+.emptyText {
+  font-size: 14px;
+  color: #6b7280;
+  font-family: var(--font-body);
+  font-weight: 400;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+/* ── Responsive: tablet ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page {
+    padding: var(--space-8) var(--space-5);
+  }
+
+  .welcomeTitle {
+    font-size: 36px;
+    letter-spacing: -1px;
+  }
+
+  .welcomeSubtitle {
+    font-size: 18px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .statCard {
+    padding: var(--space-8) var(--space-6);
+    min-height: 180px;
+    border-radius: var(--radius-xl);
+  }
+
+  .statValue {
+    font-size: 44px;
+    letter-spacing: -2px;
+  }
+
+  .mainGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .cardTitle {
+    font-size: 28px;
+  }
+
+  .scanCta {
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-xl);
+  }
+
+  .scanCtaTitle {
+    font-size: 28px;
+  }
+
+  .scanCtaSub {
+    font-size: 16px;
+  }
+
+  .scanCtaIcon {
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-lg);
+  }
+}
+
+/* ── Responsive: mobile ──────────────────────────────────────────────────── */
+@media (max-width: 375px) {
+  .welcomeTitle {
+    font-size: 28px;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statCard {
+    padding: var(--space-6) var(--space-5);
+    min-height: auto;
+  }
+
+  .statValue {
+    font-size: 36px;
+  }
+
+  .scanCtaTitle {
+    font-size: 22px;
+  }
+
+  .riskProfileGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@keyframes dashFadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

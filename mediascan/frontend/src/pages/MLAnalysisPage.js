@@ -165,19 +165,19 @@ const MLAnalysisPage = () => {
         
         return (
             <div style={{ gridColumn: '2', gridRow: '2', display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', gap: '20px' }}>
-                <div style={matrixBoxStyle('#ecfdf5', '#065f46')}>
+                <div style={matrixBoxStyle('var(--color-success-light)', 'var(--color-success)')}>
                     <span style={matrixNumberStyle}>{tn}</span>
                     <span style={matrixLabelStyle}>{t('ml.true_negative')} ({classes[1]})</span>
                 </div>
-                <div style={matrixBoxStyle('#fef2f2', '#991b1b')}>
+                <div style={matrixBoxStyle('var(--color-danger-light)', 'var(--color-danger)')}>
                     <span style={matrixNumberStyle}>{fp}</span>
                     <span style={matrixLabelStyle}>{t('ml.false_positive')}</span>
                 </div>
-                <div style={matrixBoxStyle('#fff7ed', '#92400e')}>
+                <div style={matrixBoxStyle('var(--color-warning-light)', 'var(--color-warning)')}>
                     <span style={matrixNumberStyle}>{fn}</span>
                     <span style={matrixLabelStyle}>{t('ml.false_negative')}</span>
                 </div>
-                <div style={matrixBoxStyle('#ecfdf5', '#065f46')}>
+                <div style={matrixBoxStyle('var(--color-success-light)', 'var(--color-success)')}>
                     <span style={matrixNumberStyle}>{tp}</span>
                     <span style={matrixLabelStyle}>{t('ml.true_positive')} ({classes[0]})</span>
                 </div>
@@ -192,21 +192,21 @@ const MLAnalysisPage = () => {
             display: 'grid', 
             gridTemplateColumns: `repeat(${classes.length}, 1fr)`, 
             gap: '8px',
-            background: '#f8fafc',
+            background: 'var(--color-bg)',
             padding: '12px',
             borderRadius: '16px'
         }}>
             {matrix.map((row, i) => row.map((cell, j) => (
                 <div key={`${i}-${j}`} style={{
-                    background: i === j ? '#ecfdf5' : '#fff',
-                    color: i === j ? '#065f46' : '#64748b',
+                    background: i === j ? 'var(--color-success-light)' : 'var(--color-surface)',
+                    color: i === j ? 'var(--color-success)' : 'var(--color-text-muted)',
                     padding: '10px 4px',
                     borderRadius: '8px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    border: '1px solid #e2e8f0',
+                    border: '1px solid var(--color-border)',
                     minWidth: '0',
                     opacity: cell === 0 ? 0.3 : 1
                 }}>
@@ -271,20 +271,20 @@ const MLAnalysisPage = () => {
 
     return (
         <div style={{
-            background: '#ffffff', 
-            border: '1px solid #e2e8f0', 
+            background: 'var(--color-surface)', 
+            border: '1px solid var(--color-border)', 
             borderRadius: '24px',
             padding: '40px 32px', 
             textAlign: 'center', 
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
         }} className="premium-metric-card">
-            <div style={{ marginBottom: '24px', color: '#1a56db' }}><Icon size={40} strokeWidth={1.5} /></div>
+            <div style={{ marginBottom: '24px', color: 'var(--color-primary)' }}><Icon size={40} strokeWidth={1.5} /></div>
             <div style={{ 
                 fontSize: '72px', 
                 fontWeight: 900, 
                 lineHeight: 0.9,
-                background: value >= 90 ? 'linear-gradient(135deg, #059669, #10b981)' : (value >= 80 ? 'linear-gradient(135deg, #1a56db, #3b82f6)' : 'linear-gradient(135deg, #d97706, #f59e0b)'),
+                background: value >= 90 ? 'linear-gradient(135deg, var(--color-success), #10b981)' : (value >= 80 ? 'linear-gradient(135deg, var(--color-primary), var(--color-primary-mid))' : 'linear-gradient(135deg, var(--color-warning), #f59e0b)'),
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 letterSpacing: '-3px',
@@ -293,9 +293,9 @@ const MLAnalysisPage = () => {
                 {displayVal}%
             </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginTop: '20px' }}>
-                <span style={{ fontSize: '18px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: "'DM Sans', sans-serif" }}>{t(`ml.${label.toLowerCase().replace('-', '')}`)}</span>
+                <span style={{ fontSize: '18px', fontWeight: 900, color: 'var(--color-text-muted)', textTransform: 'uppercase', letterSpacing: '1.5px', fontFamily: "'DM Sans', sans-serif" }}>{t(`ml.${label.toLowerCase().replace('-', '')}`)}</span>
                 <div className="tooltip-container" style={{ position: 'relative' }}>
-                    <Info size={18} color="#94a3b8" style={{ cursor: 'help' }} />
+                    <Info size={18} color="var(--color-text-faint)" style={{ cursor: 'help' }} />
                     <span className="tooltip-text">{t(`ml.${label.toLowerCase().replace('-', '')}_desc`)}</span>
                 </div>
             </div>
@@ -305,10 +305,10 @@ const MLAnalysisPage = () => {
 
     if (!metrics || !currentMetrics) {
         return (
-            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc' }}>
+            <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--color-bg)' }}>
                 <div style={{ textAlign: 'center' }}>
-                    <ActivityIcon className="animate-spin" size={64} color="#1a56db" style={{ marginBottom: '24px' }} />
-                    <h2 style={{ fontSize: '32px', fontWeight: 900, color: '#1e293b', fontFamily: "'Outfit', sans-serif" }}>Synchronizing Clinical Models...</h2>
+                    <ActivityIcon className="animate-spin" size={64} color="var(--color-primary)" style={{ marginBottom: '24px' }} />
+                    <h2 style={{ fontSize: '32px', fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif" }}>Synchronizing Clinical Models...</h2>
                 </div>
             </div>
         );
@@ -317,15 +317,15 @@ const MLAnalysisPage = () => {
     return (
         <div style={{ width: '100%', margin: '0 auto', padding: '48px 5vw' }}>
             {/* Page Header */}
-            <div style={{ marginBottom: '52px', borderBottom: '1px solid #e2e8f0', paddingBottom: '40px' }}>
+            <div style={{ marginBottom: '52px', borderBottom: '1px solid var(--color-border)', paddingBottom: '40px' }}>
                 <h1 style={{ 
-                    fontSize: '48px', fontWeight: 900, color: '#111827', 
+                    fontSize: '48px', fontWeight: 900, color: 'var(--color-text-primary)', 
                     fontFamily: "'Outfit', sans-serif", marginBottom: '12px',
                     letterSpacing: '-2px'
                 }}>
                     {t('ml.heading')}
                 </h1>
-                <p style={{ fontSize: '24px', color: '#64748b', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
+                <p style={{ fontSize: '24px', color: 'var(--color-text-muted)', fontFamily: "'DM Sans', sans-serif", fontWeight: 500 }}>
                     {t('ml.subtitle')}
                 </p>
             </div>
@@ -334,7 +334,7 @@ const MLAnalysisPage = () => {
       <section style={{ marginBottom: '48px' }}>
           {/* Tabs */}
           <div style={{ 
-            background: '#f1f5f9', borderRadius: '16px', padding: '6px', 
+            background: 'var(--color-border-subtle)', borderRadius: '16px', padding: '6px', 
             display: 'inline-flex', gap: '6px', marginBottom: '40px' 
           }}>
               {Object.keys(metrics).map(key => (
@@ -344,8 +344,8 @@ const MLAnalysisPage = () => {
                         style={{
                             padding: '18px 36px', fontSize: '22px', cursor: 'pointer',
                             border: 'none', borderRadius: '12px',
-                            background: activeTab === key ? '#ffffff' : 'transparent',
-                            color: activeTab === key ? '#1a56db' : '#64748b',
+                            background: activeTab === key ? 'var(--color-surface)' : 'transparent',
+                            color: activeTab === key ? 'var(--color-primary)' : 'var(--color-text-muted)',
                             fontWeight: activeTab === key ? 900 : 700,
                             boxShadow: activeTab === key ? '0 8px 16px rgba(0,0,0,0.1)' : 'none',
                             transition: 'all 0.2s',
@@ -376,21 +376,21 @@ const MLAnalysisPage = () => {
           <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px', marginBottom: '40px' }}>
               {/* Training History Chart */}
               <div style={{ 
-                  background: '#ffffff', 
-                  border: '1px solid #e2e8f0', 
+                  background: 'var(--color-surface)', 
+                  border: '1px solid var(--color-border)', 
                   borderRadius: '32px', 
                   padding: '40px',
                   boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
               }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px' }}>
-                      <h3 style={{ fontSize: '34px', fontWeight: 900, color: '#111827', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1.5px' }}>{t('ml.training_history')}</h3>
-                      <div style={{ display: 'flex', gap: '6px', background: '#f1f5f9', padding: '6px', borderRadius: '14px' }}>
+                      <h3 style={{ fontSize: '34px', fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1.5px' }}>{t('ml.training_history')}</h3>
+                      <div style={{ display: 'flex', gap: '6px', background: 'var(--color-border-subtle)', padding: '6px', borderRadius: '14px' }}>
                           <button 
                             onClick={() => setChartMode('accuracy')}
                             style={{ 
                                 padding: '12px 28px', fontSize: '18px', fontWeight: 900, border: 'none', borderRadius: '10px', cursor: 'pointer',
-                                background: chartMode === 'accuracy' ? '#1a56db' : 'transparent', 
-                                color: chartMode === 'accuracy' ? '#fff' : '#64748b',
+                                background: chartMode === 'accuracy' ? 'var(--color-primary)' : 'transparent', 
+                                color: chartMode === 'accuracy' ? '#fff' : 'var(--color-text-muted)',
                                 transition: '0.2s'
                             }}
                           > {t('ml.accuracy')} </button>
@@ -398,8 +398,8 @@ const MLAnalysisPage = () => {
                             onClick={() => setChartMode('loss')}
                             style={{ 
                                 padding: '12px 28px', fontSize: '18px', fontWeight: 900, border: 'none', borderRadius: '10px', cursor: 'pointer',
-                                background: chartMode === 'loss' ? '#1a56db' : 'transparent', 
-                                color: chartMode === 'loss' ? '#fff' : '#64748b',
+                                background: chartMode === 'loss' ? 'var(--color-primary)' : 'transparent', 
+                                color: chartMode === 'loss' ? '#fff' : 'var(--color-text-muted)',
                                 transition: '0.2s'
                             }}
                           > {t('ml.loss')} </button>
@@ -407,30 +407,30 @@ const MLAnalysisPage = () => {
                   </div>
                   <ResponsiveContainer width="100%" height={360}>
                       <LineChart data={formatHistoryData(currentMetrics.trainingHistory, chartMode)}>
-                          <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                          <XAxis dataKey="epoch" tick={{fontSize: 18, fill: '#94a3b8'}} axisLine={false} tickLine={false} />
-                          <YAxis tick={{fontSize: 18, fill: '#94a3b8'}} axisLine={false} tickLine={false} domain={chartMode === 'accuracy' ? [0, 100] : [0, 1.5]} />
-                          <RechartsTooltip contentStyle={{background: '#1e293b', border: 'none', borderRadius: '16px', color: '#fff', fontSize: '18px', boxShadow: '0 10px 30px rgba(0,0,0,0.3)', padding: '20px'}} />
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" vertical={false} />
+                          <XAxis dataKey="epoch" tick={{fontSize: 18, fill: 'var(--color-text-faint)'}} axisLine={false} tickLine={false} />
+                          <YAxis tick={{fontSize: 18, fill: 'var(--color-text-faint)'}} axisLine={false} tickLine={false} domain={chartMode === 'accuracy' ? [0, 100] : [0, 1.5]} />
+                          <RechartsTooltip contentStyle={{background: 'var(--color-text-primary)', border: 'none', borderRadius: '16px', color: '#fff', fontSize: '18px', boxShadow: '0 10px 30px rgba(0,0,0,0.3)', padding: '20px'}} />
                           <Legend wrapperStyle={{ fontSize: '18px', paddingTop: '36px' }} iconType="circle" />
-                          <Line type="monotone" dataKey="val" name={t('ml.clinical_training')} stroke="#1a56db" strokeWidth={5} dot={{r: 6, fill: '#1a56db', strokeWidth: 3, stroke: '#fff'}} activeDot={{ r: 10, strokeWidth: 0 }} />
-                          <Line type="monotone" dataKey="vval" name={t('ml.model_validation')} stroke="#0ea5e9" strokeWidth={5} strokeDasharray="10 10" dot={{r: 6, fill: '#0ea5e9', strokeWidth: 3, stroke: '#fff'}} />
+                          <Line type="monotone" dataKey="val" name={t('ml.clinical_training')} stroke="var(--color-primary)" strokeWidth={5} dot={{r: 6, fill: 'var(--color-primary)', strokeWidth: 3, stroke: 'var(--color-surface)'}} activeDot={{ r: 10, strokeWidth: 0 }} />
+                          <Line type="monotone" dataKey="vval" name={t('ml.model_validation')} stroke="#0ea5e9" strokeWidth={5} strokeDasharray="10 10" dot={{r: 6, fill: '#0ea5e9', strokeWidth: 3, stroke: 'var(--color-surface)'}} />
                       </LineChart>
                   </ResponsiveContainer>
               </div>
 
               {/* Confusion Matrix */}
               <div style={{ 
-                  background: '#ffffff', 
-                  border: '1px solid #e2e8f0', 
+                  background: 'var(--color-surface)', 
+                  border: '1px solid var(--color-border)', 
                   borderRadius: '32px', 
                   padding: '40px',
                   boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)'
               }}>
-                  <h3 style={{ fontSize: '34px', fontWeight: 900, color: '#111827', marginBottom: '48px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1.5px' }}>{t('ml.prediction_matrix')}</h3>
+                  <h3 style={{ fontSize: '34px', fontWeight: 900, color: 'var(--color-text-primary)', marginBottom: '48px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1.5px' }}>{t('ml.prediction_matrix')}</h3>
                   
                   <div style={{ display: 'grid', gridTemplateColumns: '30px 1fr', gridTemplateRows: '30px 1fr', gap: '12px' }}>
-                   <div style={{ gridColumn: '2', textAlign: 'center', fontSize: '16px', fontWeight: 900, color: '#94a3b8', letterSpacing: '1.5px', fontFamily: "'DM Sans', sans-serif" }}>{t('ml.predicted_model')}</div>
-                   <div style={{ gridRow: '2', writingMode: 'vertical-rl', transform: 'rotate(180deg)', textAlign: 'center', fontSize: '16px', fontWeight: 900, color: '#94a3b8', letterSpacing: '1.5px', fontFamily: "'DM Sans', sans-serif" }}>{t('ml.actual_labels')}</div>
+                   <div style={{ gridColumn: '2', textAlign: 'center', fontSize: '16px', fontWeight: 900, color: 'var(--color-text-faint)', letterSpacing: '1.5px', fontFamily: "'DM Sans', sans-serif" }}>{t('ml.predicted_model')}</div>
+                   <div style={{ gridRow: '2', writingMode: 'vertical-rl', transform: 'rotate(180deg)', textAlign: 'center', fontSize: '16px', fontWeight: 900, color: 'var(--color-text-faint)', letterSpacing: '1.5px', fontFamily: "'DM Sans', sans-serif" }}>{t('ml.actual_labels')}</div>
                    
                    {renderConfusionMatrix(currentMetrics.confusionMatrix, currentMetrics.classNames)}
                   </div>
@@ -438,17 +438,17 @@ const MLAnalysisPage = () => {
           </div>
 
           {/* ROC Curve Area */}
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', padding: '40px', marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+          <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '32px', padding: '40px', marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px' }}>
                     <div>
-                     <h3 style={{ fontSize: '34px', fontWeight: 900, color: '#111827', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1.5px' }}>{t('ml.roc_analysis')}</h3>
-                     <p style={{ fontSize: '22px', color: '#64748b', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{t('ml.roc_subtitle')}</p>
+                     <h3 style={{ fontSize: '34px', fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1.5px' }}>{t('ml.roc_analysis')}</h3>
+                     <p style={{ fontSize: '22px', color: 'var(--color-text-muted)', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{t('ml.roc_subtitle')}</p>
                    </div>
                    <div style={{ textAlign: 'right' }}>
-                       <div style={{ fontSize: '18px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 900 }}>{t('ml.performance_index')}</div>
+                       <div style={{ fontSize: '18px', color: 'var(--color-text-faint)', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 900 }}>{t('ml.performance_index')}</div>
                        <div style={{ 
                            fontSize: '64px', fontWeight: 900, 
-                           background: 'linear-gradient(135deg, #1a56db, #3b82f6)',
+                           background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-mid))',
                            WebkitBackgroundClip: 'text',
                            WebkitTextFillColor: 'transparent',
                            fontFamily: "'Outfit', sans-serif",
@@ -458,13 +458,13 @@ const MLAnalysisPage = () => {
                 </div>
                <ResponsiveContainer width="100%" height={300}>
                   <AreaChart data={currentMetrics.rocPoints}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
-                    <XAxis dataKey="fpr" tick={{fontSize: 14, fill: '#94a3b8'}} type="number" domain={[0, 1]} />
-                    <YAxis dataKey="tpr" tick={{fontSize: 14, fill: '#94a3b8'}} type="number" domain={[0, 1]} />
-                    <ReferenceLine x={0} stroke="#cbd5e1" />
-                    <Line type="monotone" dataKey="tpr" stroke="#1a56db" strokeWidth={4} dot={false} />
-                    <Area type="monotone" dataKey="tpr" stroke="none" fill="#1a56db" fillOpacity={0.08} />
-                    <Line data={[{fpr: 0, tpr: 0}, {fpr: 1, tpr: 1}]} dataKey="tpr" stroke="#94a3b8" strokeDasharray="8 8" dot={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-subtle)" vertical={false} />
+                    <XAxis dataKey="fpr" tick={{fontSize: 14, fill: 'var(--color-text-faint)'}} type="number" domain={[0, 1]} />
+                    <YAxis dataKey="tpr" tick={{fontSize: 14, fill: 'var(--color-text-faint)'}} type="number" domain={[0, 1]} />
+                    <ReferenceLine x={0} stroke="var(--color-border)" />
+                    <Line type="monotone" dataKey="tpr" stroke="var(--color-primary)" strokeWidth={4} dot={false} />
+                    <Area type="monotone" dataKey="tpr" stroke="none" fill="var(--color-primary)" fillOpacity={0.08} />
+                    <Line data={[{fpr: 0, tpr: 0}, {fpr: 1, tpr: 1}]} dataKey="tpr" stroke="var(--color-text-faint)" strokeDasharray="8 8" dot={false} />
                     <RechartsTooltip />
                   </AreaChart>
                </ResponsiveContainer>
@@ -479,11 +479,11 @@ const MLAnalysisPage = () => {
                </div>
           </div>
 
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', padding: '40px', overflowX: 'auto', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-                <h3 style={{ fontSize: '34px', fontWeight: 900, color: '#111827', marginBottom: '32px', letterSpacing: '-1px' }}>{t('ml.comparison_matrix')}</h3>
+          <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '32px', padding: '40px', overflowX: 'auto', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+                <h3 style={{ fontSize: '34px', fontWeight: 900, color: 'var(--color-text-primary)', marginBottom: '32px', letterSpacing: '-1px' }}>{t('ml.comparison_matrix')}</h3>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                     <thead>
-                        <tr style={{ background: '#f8fafc', color: '#94a3b8', fontSize: '18px', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 1000 }}>
+                        <tr style={{ background: 'var(--color-bg)', color: 'var(--color-text-faint)', fontSize: '18px', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 1000 }}>
                             <th style={{ padding: '32px 40px', textAlign: 'left', borderRadius: '20px 0 0 20px' }}>{t('ml.diag_intel')}</th>
                             <th style={{ padding: '32px 40px' }}>{t('ml.accuracy')}</th>
                             <th style={{ padding: '32px 40px' }}>{t('ml.precision')}</th>
@@ -494,15 +494,15 @@ const MLAnalysisPage = () => {
                     </thead>
                     <tbody>
                         {Object.entries(metrics).map(([key, model]) => (
-                            <tr key={key} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }} className="table-row-hover">
-                                <td style={{ padding: '40px', textAlign: 'left', fontWeight: 900, color: '#1e293b', fontSize: '26px', fontFamily: "'Outfit', sans-serif" }}>
+                            <tr key={key} style={{ borderBottom: '1px solid var(--color-border-subtle)', transition: 'background 0.2s' }} className="table-row-hover">
+                                <td style={{ padding: '40px', textAlign: 'left', fontWeight: 900, color: 'var(--color-text-primary)', fontSize: '26px', fontFamily: "'Outfit', sans-serif" }}>
                                     {key === 'eye' ? '👁' : (key === 'palm' ? '🖐' : (key === 'retina' ? '🔬' : '🦶'))} {model.name}
                                 </td>
-                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: '#334155' }}>{model.accuracy}%</td>
-                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: '#334155' }}>{model.precision}%</td>
-                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: '#334155' }}>{model.recall}%</td>
-                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: '#334155' }}>{model.f1}%</td>
-                                <td style={{ padding: '40px', fontWeight: 900, color: '#1a56db', fontSize: '28px', fontFamily: "'Outfit', sans-serif" }}>{model.auc}%</td>
+                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: 'var(--color-text-secondary)' }}>{model.accuracy}%</td>
+                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: 'var(--color-text-secondary)' }}>{model.precision}%</td>
+                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: 'var(--color-text-secondary)' }}>{model.recall}%</td>
+                                <td style={{ padding: '40px', fontWeight: 800, fontSize: '26px', color: 'var(--color-text-secondary)' }}>{model.f1}%</td>
+                                <td style={{ padding: '40px', fontWeight: 900, color: 'var(--color-primary)', fontSize: '28px', fontFamily: "'Outfit', sans-serif" }}>{model.auc}%</td>
                             </tr>
                         ))}
                     </tbody>
@@ -511,16 +511,16 @@ const MLAnalysisPage = () => {
 
           {/* Architecture Comparison Table */}
           {ARCHITECTURE_COMPARISON[activeTab] && (
-            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', padding: '40px', marginTop: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+            <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '32px', padding: '40px', marginTop: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
-                    <h3 style={{ fontSize: '34px', fontWeight: 900, color: '#111827', letterSpacing: '-1px', fontFamily: "'Outfit', sans-serif" }}>Multi-Model Architecture benchmark</h3>
-                    <div style={{ background: '#eff6ff', color: '#1a56db', padding: '10px 20px', borderRadius: '14px', fontSize: '18px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <h3 style={{ fontSize: '34px', fontWeight: 900, color: 'var(--color-text-primary)', letterSpacing: '-1px', fontFamily: "'Outfit', sans-serif" }}>Multi-Model Architecture benchmark</h3>
+                    <div style={{ background: 'var(--color-primary-light)', color: 'var(--color-primary)', padding: '10px 20px', borderRadius: '14px', fontSize: '18px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <Zap size={20} /> Competitive Analysis
                     </div>
                 </div>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'center' }}>
                     <thead>
-                        <tr style={{ background: '#f8fafc', color: '#94a3b8', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 1000 }}>
+                        <tr style={{ background: 'var(--color-bg)', color: 'var(--color-text-faint)', fontSize: '16px', textTransform: 'uppercase', letterSpacing: '2px', fontWeight: 1000 }}>
                             <th style={{ padding: '24px 32px', textAlign: 'left', borderRadius: '16px 0 0 16px' }}>Network Architecture</th>
                             <th style={{ padding: '24px 32px' }}>Accuracy</th>
                             <th style={{ padding: '24px 32px' }}>Precision</th>
@@ -530,21 +530,21 @@ const MLAnalysisPage = () => {
                     </thead>
                     <tbody>
                         {ARCHITECTURE_COMPARISON[activeTab].map((row, idx) => (
-                            <tr key={idx} style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.2s' }}>
-                                <td style={{ padding: '32px', textAlign: 'left', fontWeight: 900, color: '#1e293b', fontSize: '22px' }}>
+                            <tr key={idx} style={{ borderBottom: '1px solid var(--color-border-subtle)', transition: 'background 0.2s' }}>
+                                <td style={{ padding: '32px', textAlign: 'left', fontWeight: 900, color: 'var(--color-text-primary)', fontSize: '22px' }}>
                                     {row.architecture}
                                 </td>
-                                <td style={{ padding: '32px', fontWeight: 800, fontSize: '22px', color: row.accuracy >= 90 ? '#059669' : '#334155' }}>{row.accuracy}%</td>
-                                <td style={{ padding: '32px', fontWeight: 800, fontSize: '22px', color: '#334155' }}>{row.precision}%</td>
-                                <td style={{ padding: '32px', fontWeight: 800, fontSize: '20px', color: '#64748b' }}>{row.params}</td>
+                                <td style={{ padding: '32px', fontWeight: 800, fontSize: '22px', color: row.accuracy >= 90 ? 'var(--color-success)' : 'var(--color-text-secondary)' }}>{row.accuracy}%</td>
+                                <td style={{ padding: '32px', fontWeight: 800, fontSize: '22px', color: 'var(--color-text-secondary)' }}>{row.precision}%</td>
+                                <td style={{ padding: '32px', fontWeight: 800, fontSize: '20px', color: 'var(--color-text-muted)' }}>{row.params}</td>
                                 <td style={{ padding: '32px' }}>
                                     <span style={{ 
                                         padding: '8px 16px', 
                                         borderRadius: '10px', 
                                         fontSize: '14px', 
                                         fontWeight: 900,
-                                        background: row.status === 'Selected' ? '#dcfce7' : '#f1f5f9',
-                                        color: row.status === 'Selected' ? '#166534' : '#64748b',
+                                        background: row.status === 'Selected' ? 'var(--color-success-light)' : 'var(--color-border-subtle)',
+                                        color: row.status === 'Selected' ? 'var(--color-success)' : 'var(--color-text-muted)',
                                         textTransform: 'uppercase'
                                     }}>
                                         {row.status}
@@ -560,43 +560,43 @@ const MLAnalysisPage = () => {
 
 
  
-      <hr style={{ border: 'none', borderTop: '1px solid #e2e8f0', margin: '60px 0' }} />
+      <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '60px 0' }} />
  
       {/* SECTION B: Live GradCAM Visualizer */}
       <section style={{ marginBottom: '60px' }}>
           <div style={{ marginBottom: '40px' }}>
-            <h2 style={{ fontSize: '42px', fontWeight: 900, color: '#111827', fontFamily: "'Outfit', sans-serif", marginBottom: '16px', letterSpacing: '-1.5px' }}>
+            <h2 style={{ fontSize: '42px', fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif", marginBottom: '16px', letterSpacing: '-1.5px' }}>
                 {t('ml.heatmap_title')}
             </h2>
-            <p style={{ fontSize: '24px', color: '#64748b', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+            <p style={{ fontSize: '24px', color: 'var(--color-text-muted)', fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
                 {t('ml.heatmap_subtitle')}
             </p>
           </div>
  
-          <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '24px', padding: '32px', marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+          <div style={{ background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '24px', padding: '32px', marginBottom: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
              <div 
                 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
                 onClick={() => setIsGradCamExpanded(!isGradCamExpanded)}
              >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontWeight: 900, fontSize: '34px', color: '#1e293b', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1px' }}>
-                    <div style={{ width: '64px', height: '64px', background: '#eff6ff', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Zap size={36} color="#1a56db" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontWeight: 900, fontSize: '34px', color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1px' }}>
+                    <div style={{ width: '64px', height: '64px', background: 'var(--color-primary-light)', borderRadius: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Zap size={36} color="var(--color-primary)" />
                     </div>
                     {t('ml.gradcam_overview')}
                 </div>
-                <ChevronRight size={40} color="#94a3b8" style={{ transform: isGradCamExpanded ? 'rotate(90deg)' : 'none', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)' }} />
+                <ChevronRight size={40} color="var(--color-text-faint)" style={{ transform: isGradCamExpanded ? 'rotate(90deg)' : 'none', transition: '0.3s cubic-bezier(0.4, 0, 0.2, 1)' }} />
              </div>
              {isGradCamExpanded && (
-                 <div style={{ marginTop: '32px', padding: '32px', background: '#f8fafc', borderRadius: '24px', fontSize: '24px', color: '#475569', lineHeight: 1.8, border: '1px solid #e2e8f0' }}>
+                 <div style={{ marginTop: '32px', padding: '32px', background: 'var(--color-bg)', borderRadius: '24px', fontSize: '24px', color: 'var(--color-text-secondary)', lineHeight: 1.8, border: '1px solid var(--color-border)' }}>
                      {t('ml.gradcam_desc')}
                      <ul style={{ margin: '24px 0', paddingLeft: '32px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                          <li style={{ listStyleType: 'none', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#ef4444' }}></div>
-                             <span><span style={{color: '#dc2626', fontWeight: 900}}>{t('ml.red_clusters')}</span> {t('ml.red_desc')}</span>
+                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'var(--color-danger)' }}></div>
+                             <span><span style={{color: 'var(--color-danger)', fontWeight: 900}}>{t('ml.red_clusters')}</span> {t('ml.red_desc')}</span>
                          </li>
                          <li style={{ listStyleType: 'none', display: 'flex', alignItems: 'center', gap: '14px' }}>
-                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: '#3b82f6' }}></div>
-                             <span><span style={{color: '#1d4ed8', fontWeight: 900}}>{t('ml.blue_regions')}</span> {t('ml.blue_desc')}</span>
+                             <div style={{ width: '16px', height: '16px', borderRadius: '50%', background: 'var(--color-primary-mid)' }}></div>
+                             <span><span style={{color: 'var(--color-primary)', fontWeight: 900}}>{t('ml.blue_regions')}</span> {t('ml.blue_desc')}</span>
                          </li>
                      </ul>
                  </div>
@@ -605,44 +605,44 @@ const MLAnalysisPage = () => {
  
           <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '32px' }}>
               <div style={{ 
-                  background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '32px', 
+                  background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '32px', 
                   padding: '40px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)', alignSelf: 'start'
               }}>
                   <div 
                     onClick={() => document.getElementById('gradcam-input').click()}
                     style={{
-                        border: '3px dashed #cbd5e1', background: '#f8fafc', borderRadius: '24px',
+                        border: '3px dashed var(--color-border)', background: 'var(--color-bg)', borderRadius: '24px',
                         padding: '60px 20px', textAlign: 'center', cursor: 'pointer', transition: 'all 0.3s'
                     }}
-                    onMouseOver={(e) => { e.currentTarget.style.borderColor = '#1a56db'; e.currentTarget.style.background = '#eff6ff'; }}
-                    onMouseOut={(e) => { e.currentTarget.style.borderColor = '#cbd5e1'; e.currentTarget.style.background = '#f8fafc'; }}
+                    onMouseOver={(e) => { e.currentTarget.style.borderColor = 'var(--color-primary)'; e.currentTarget.style.background = 'var(--color-primary-light)'; }}
+                    onMouseOut={(e) => { e.currentTarget.style.borderColor = 'var(--color-border)'; e.currentTarget.style.background = 'var(--color-bg)'; }}
                   >
                         <input id="gradcam-input" type="file" hidden onChange={handleFileSelect} accept="image/*" />
                         {selectedFile ? (
                             <div style={{ animation: 'fadeIn 0.4s ease' }}>
                                 <img src={URL.createObjectURL(selectedFile)} style={{ height: '180px', borderRadius: '20px', marginBottom: '20px', boxShadow: '0 12px 24px rgba(0,0,0,0.15)' }} />
-                                <div style={{ fontSize: '20px', fontWeight: 900, color: '#111827', fontFamily: "'Outfit', sans-serif" }}>{selectedFile.name}</div>
-                                <div style={{ fontSize: '18px', color: '#94a3b8', marginTop: '6px', fontWeight: 500 }}>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB Image File</div>
+                                <div style={{ fontSize: '20px', fontWeight: 900, color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif" }}>{selectedFile.name}</div>
+                                <div style={{ fontSize: '18px', color: 'var(--color-text-faint)', marginTop: '6px', fontWeight: 500 }}>{(selectedFile.size / 1024 / 1024).toFixed(2)} MB Image File</div>
                             </div>
                         ) : (
                             <div style={{ animation: 'fadeIn 0.4s ease' }}>
-                                <div style={{ width: '96px', height: '96px', background: '#fff', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 8px 16px rgba(0,0,0,0.06)' }}>
-                                    <Upload size={48} color="#1a56db" />
+                                <div style={{ width: '96px', height: '96px', background: 'var(--color-surface)', borderRadius: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px', boxShadow: '0 8px 16px rgba(0,0,0,0.06)' }}>
+                                    <Upload size={48} color="var(--color-primary)" />
                                 </div>
-                                <div style={{ fontWeight: 900, color: '#111827', fontSize: '24px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{t('ml.forensic_upload')}</div>
-                                <div style={{ fontSize: '18px', color: '#94a3b8', marginTop: '12px', fontWeight: 500 }}>{t('ml.drop_medical')}</div>
+                                <div style={{ fontWeight: 900, color: 'var(--color-text-primary)', fontSize: '24px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{t('ml.forensic_upload')}</div>
+                                <div style={{ fontSize: '18px', color: 'var(--color-text-faint)', marginTop: '12px', fontWeight: 500 }}>{t('ml.drop_medical')}</div>
                             </div>
                         )}
                   </div>
  
                   <div style={{ marginTop: '32px' }}>
-                        <label style={{ fontSize: '24px', fontWeight: 900, color: '#334155', display: 'block', marginBottom: '16px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1px' }}>{t('ml.model_select')}</label>
+                        <label style={{ fontSize: '24px', fontWeight: 900, color: 'var(--color-text-secondary)', display: 'block', marginBottom: '16px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-1px' }}>{t('ml.model_select')}</label>
                         <select 
                             value={visualizerModel}
                             onChange={(e) => setVisualizerModel(e.target.value)}
                             style={{ 
                                 width: '100%', height: '72px', padding: '0 20px', borderRadius: '16px', 
-                                border: '1px solid #e2e8f0', background: '#fff', fontSize: '22px', fontWeight: 800, color: '#1e293b',
+                                border: '1px solid var(--color-border)', background: 'var(--color-surface)', fontSize: '22px', fontWeight: 800, color: 'var(--color-text-primary)',
                                 outline: 'none', cursor: 'pointer', appearance: 'none',
                                 backgroundImage: 'url("data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E")',
                                 backgroundRepeat: 'no-repeat', backgroundPosition: 'right 20px center', backgroundSize: '18px'
@@ -660,8 +660,8 @@ const MLAnalysisPage = () => {
                     disabled={!selectedFile || isAnalyzing}
                     style={{
                         width: '100%', height: '64px', marginTop: '32px', border: 'none', borderRadius: '16px', 
-                        background: selectedFile ? 'linear-gradient(135deg, #1a56db, #2563eb)' : '#f1f5f9',
-                        color: selectedFile ? '#fff' : '#94a3b8', fontWeight: 900, fontSize: '22px',
+                        background: selectedFile ? 'linear-gradient(135deg, var(--color-primary), var(--color-primary-mid))' : 'var(--color-border-subtle)',
+                        color: selectedFile ? '#fff' : 'var(--color-text-faint)', fontWeight: 900, fontSize: '22px',
                         cursor: selectedFile ? 'pointer' : 'not-allowed', 
                         boxShadow: selectedFile ? '0 12px 30px rgba(26,86,219,0.3)' : 'none',
                         transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
@@ -682,10 +682,10 @@ const MLAnalysisPage = () => {
               {/* Visualization Panels */}
               <div style={{ minHeight: '500px' }}>
                   {!gradCamResult && !isAnalyzing ? (
-                      <div style={{ height: '100%', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.6, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
-                          <BarChart3 size={80} color="#e2e8f0" />
-                          <p style={{ marginTop: '24px', color: '#94a3b8', fontWeight: 900, fontSize: '24px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{t('ml.awaiting_diag')}</p>
-                          <p style={{ fontSize: '18px', color: '#94a3b8', maxWidth: '360px', textAlign: 'center', marginTop: '12px', fontWeight: 500 }}>{t('ml.awaiting_desc')}</p>
+                      <div style={{ height: '100%', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', opacity: 0.6, boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
+                          <BarChart3 size={80} color="var(--color-border)" />
+                          <p style={{ marginTop: '24px', color: 'var(--color-text-faint)', fontWeight: 900, fontSize: '24px', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>{t('ml.awaiting_diag')}</p>
+                          <p style={{ fontSize: '18px', color: 'var(--color-text-faint)', maxWidth: '360px', textAlign: 'center', marginTop: '12px', fontWeight: 500 }}>{t('ml.awaiting_desc')}</p>
                       </div>
                   ) : gradCamResult ? (
                       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px', animation: 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)' }}>
@@ -701,7 +701,7 @@ const MLAnalysisPage = () => {
                                     <img src={gradCamResult.gradcam_image_base64} alt="heatmap" style={imgFit} />
                                     <div style={{ marginTop: '20px' }}>
                                         <div style={{ height: '12px', width: '100%', borderRadius: '6px', background: 'linear-gradient(to right, #3b82f6, #22c55e, #eab308, #ef4444)' }}></div>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#94a3b8', marginTop: '8px', fontWeight: 800, letterSpacing: '0.5px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: 'var(--color-text-faint)', marginTop: '8px', fontWeight: 800, letterSpacing: '0.5px' }}>
                                             <span>{t('ml.low_attention')}</span>
                                             <span>{t('ml.critical_focus')}</span>
                                         </div>
@@ -713,28 +713,28 @@ const MLAnalysisPage = () => {
                                 <div style={{ padding: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
                                     <div style={{ position: 'relative', width: '160px', height: '160px' }}>
                                         <svg viewBox="0 0 100 100" style={{ width: '100%', height: '100%' }}>
-                                            <circle cx="50" cy="50" r="44" fill="none" stroke="#1a56db" strokeWidth="10" 
+                                            <circle cx="50" cy="50" r="44" fill="none" stroke="var(--color-primary)" strokeWidth="10" 
                                                 strokeDasharray="276" strokeDashoffset={276 * (1 - gradCamResult.confidence/100)} 
                                                 strokeLinecap="round" transform="rotate(-90 50 50)" style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.16, 1, 0.3, 1)' }} 
                                             />
                                         </svg>
                                         <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                                            <div style={{ fontWeight: 900, fontSize: '52px', color: '#1e293b', fontFamily: "'Outfit', sans-serif", letterSpacing: '-2px' }}>{gradCamResult.confidence}%</div>
-                                            <div style={{ fontSize: '16px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('ml.certainty')}</div>
+                                            <div style={{ fontWeight: 900, fontSize: '52px', color: 'var(--color-text-primary)', fontFamily: "'Outfit', sans-serif", letterSpacing: '-2px' }}>{gradCamResult.confidence}%</div>
+                                            <div style={{ fontSize: '16px', fontWeight: 800, color: 'var(--color-text-faint)', textTransform: 'uppercase', letterSpacing: '1px' }}>{t('ml.certainty')}</div>
                                         </div>
                                     </div>
  
                                     <div style={{ 
                                         padding: '14px 32px', borderRadius: '16px', fontSize: '20px', fontWeight: 900,
-                                        background: gradCamResult.prediction === 'positive' ? '#fef2f2' : '#f0fdf4',
-                                        color: gradCamResult.prediction === 'positive' ? '#dc2626' : '#059669',
+                                        background: gradCamResult.prediction === 'positive' ? 'var(--color-danger-light)' : 'var(--color-success-light)',
+                                        color: gradCamResult.prediction === 'positive' ? 'var(--color-danger)' : 'var(--color-success)',
                                         border: gradCamResult.prediction === 'positive' ? '2px solid rgba(220,38,38,0.2)' : '2px solid rgba(5,150,105,0.2)',
                                         letterSpacing: '1px', boxShadow: '0 8px 16px rgba(0,0,0,0.06)', fontFamily: "'Outfit', sans-serif"
                                     }}>
                                         {gradCamResult.prediction.toUpperCase()} {t('ml.identified')}
                                     </div>
  
-                                    <p style={{ fontSize: '16px', color: '#475569', textAlign: 'center', fontStyle: 'italic', lineHeight: 1.6, fontWeight: 500 }}>
+                                    <p style={{ fontSize: '16px', color: 'var(--color-text-muted)', textAlign: 'center', fontStyle: 'italic', lineHeight: 1.6, fontWeight: 500 }}>
                                         "{gradCamResult.interpretation}"
                                     </p>
  
@@ -745,9 +745,9 @@ const MLAnalysisPage = () => {
                                             link.download = `MediScan_Heatmap_Forensics.jpg`;
                                             link.click();
                                         }}
-                                        style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 28px', background: '#fff', border: '1px solid #e2e8f0', borderRadius: '16px', fontSize: '17px', fontWeight: 800, cursor: 'pointer', color: '#1a56db', transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif", boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
-                                        onMouseOver={(e) => { e.currentTarget.style.background = '#eff6ff'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                                        onMouseOut={(e) => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 28px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', fontSize: '17px', fontWeight: 800, cursor: 'pointer', color: 'var(--color-primary)', transition: 'all 0.2s', fontFamily: "'DM Sans', sans-serif", boxShadow: '0 4px 6px rgba(0,0,0,0.02)' }}
+                                        onMouseOver={(e) => { e.currentTarget.style.background = 'var(--color-primary-light)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                                        onMouseOut={(e) => { e.currentTarget.style.background = 'var(--color-surface)'; e.currentTarget.style.transform = 'translateY(0)'; }}
                                     >
                                         <Download size={20} /> {t('ml.export_analysis')}
                                     </button>
@@ -763,17 +763,17 @@ const MLAnalysisPage = () => {
         .premium-metric-card:hover { 
             box-shadow: 0 25px 50px -12px rgba(17,24,39,0.08); 
             transform: translateY(-8px); 
-            border-color: #bfdbfe;
+            border-color: var(--color-primary-ring);
         }
         .premium-card-hover:hover {
             box-shadow: 0 20px 40px rgba(0,0,0,0.06);
             transform: translateY(-4px);
         }
         .table-row-hover:hover {
-            background: #f8fafc;
+            background: var(--color-bg);
         }
         .tooltip-text {
-            visibility: hidden; width: 220px; background-color: #1e293b; color: #fff; text-align: center;
+            visibility: hidden; width: 220px; background-color: var(--color-text-primary); color: #fff; text-align: center;
             border-radius: 12px; padding: 12px; position: absolute; z-index: 10; bottom: 125%; left: 50%;
             margin-left: -110px; opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); font-size: 14px; line-height: 1.5; pointer-events: none;
             box-shadow: 0 10px 15px rgba(0,0,0,0.1);
@@ -794,22 +794,22 @@ const MLAnalysisPage = () => {
 const matrixBoxStyle = (bg, color) => ({ 
     background: bg, color: color, minHeight: '160px', borderRadius: '24px', 
     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', 
-    border: `1px solid ${color}20` 
+    border: '1px solid var(--color-border)' 
 });
 const matrixNumberStyle = { fontSize: '56px', fontWeight: 900, fontFamily: "'Outfit', sans-serif" };
 const matrixLabelStyle = { fontSize: '16px', fontWeight: 900, opacity: 0.7, fontFamily: "'DM Sans', sans-serif" };
 
 const badgeStyle = {
-    padding: '8px 12px', background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '10px', fontSize: '11px', color: '#64748b', fontWeight: 800, letterSpacing: '0.5px'
+    padding: '8px 12px', background: 'var(--color-bg)', border: '1px solid var(--color-border)', borderRadius: '10px', fontSize: '11px', color: 'var(--color-text-muted)', fontWeight: 800, letterSpacing: '0.5px'
 };
-badgeStyle.span = { color: '#1a56db' };
+badgeStyle.span = { color: 'var(--color-primary)' };
  
 const pillStyle = {
-    padding: '12px 24px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', fontSize: '20px', color: '#334155', whiteSpace: 'nowrap', fontWeight: 800, boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
+    padding: '12px 24px', background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '16px', fontSize: '20px', color: 'var(--color-text-secondary)', whiteSpace: 'nowrap', fontWeight: 800, boxShadow: '0 2px 4px rgba(0,0,0,0.02)'
 };
  
-const panelStyle = { background: '#fff', border: '1px solid #e2e8f0', borderRadius: '32px', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.3s ease' };
-const panelHeader = { padding: '18px 24px', borderBottom: '1px solid #f1f5f9', fontSize: '16px', fontWeight: 800, color: '#1e293b', background: '#f8fafc', textTransform: 'uppercase', letterSpacing: '1px' };
+const panelStyle = { background: 'var(--color-surface)', border: '1px solid var(--color-border)', borderRadius: '32px', overflow: 'hidden', display: 'flex', flexDirection: 'column', transition: 'all 0.3s ease' };
+const panelHeader = { padding: '18px 24px', borderBottom: '1px solid var(--color-border-subtle)', fontSize: '16px', fontWeight: 800, color: 'var(--color-text-primary)', background: 'var(--color-bg)', textTransform: 'uppercase', letterSpacing: '1px' };
 const panelBody = { padding: '24px', flex: 1, display: 'flex', flexDirection: 'column' };
 const imgFit = { width: '100%', height: '220px', objectFit: 'contain', borderRadius: '16px', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' };
  

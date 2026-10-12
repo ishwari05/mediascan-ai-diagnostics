@@ -13,6 +13,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
+import s from './LoginPage.module.css';
 
 const LoginPage = () => {
     const { t } = useTranslation();
@@ -41,7 +42,7 @@ const LoginPage = () => {
     };
 
     return (
-        <div style={{ 
+        <div className={s.page} style={{ 
             display: 'flex', 
             minHeight: '100vh', 
             background: '#ffffff', 
@@ -49,7 +50,7 @@ const LoginPage = () => {
             overflow: 'hidden'
         }}>
             {/* LEFT PANEL: 50% width, gradient, hidden on mobile */}
-            <div style={{ 
+            <div className={`${s.leftPanel} desktop-only-panel`} style={{ 
                 flex: 1, 
                 background: 'linear-gradient(160deg, #1e3a5f 0%, #1a56db 60%, #2563eb 100%)',
                 padding: '48px',
@@ -59,7 +60,7 @@ const LoginPage = () => {
                 color: '#ffffff',
                 // Responsive: show only on desktop
                 '@media (maxWidth: 768px)': { display: 'none' }
-            }} className="desktop-only-panel">
+            }}>
                 <style>{`
                     @media (max-width: 768px) {
                         .desktop-only-panel { display: none !important; }
@@ -173,7 +174,7 @@ const LoginPage = () => {
             </div>
 
             {/* RIGHT PANEL: 50% width, white background, form */}
-            <div style={{ 
+            <div className={s.rightPanel} style={{ 
                 flex: 1, 
                 background: '#ffffff', 
                 display: 'flex', 
@@ -181,7 +182,7 @@ const LoginPage = () => {
                 justifyContent: 'center', 
                 padding: '64px 48px' 
             }}>
-                <div style={{ maxWidth: '720px', width: '100%', margin: 'auto' }}>
+                <div className={s.formCard} style={{ maxWidth: '720px', width: '100%', margin: 'auto' }}>
                     
                     {/* Logo (Mobile Only) */}
                     <div style={{ 
@@ -209,7 +210,7 @@ const LoginPage = () => {
                         <div style={{ fontSize: '18px', fontWeight: 700, color: '#111827' }}>MediScan AI</div>
                     </div>
 
-                    <h2 style={{ 
+                    <h2 className={s.formTitle} style={{ 
                         fontFamily: "'Outfit', sans-serif", 
                         fontWeight: 900, 
                         fontSize: '56px', 
@@ -217,7 +218,7 @@ const LoginPage = () => {
                         marginBottom: '16px',
                         letterSpacing: '-2px'
                     }}>{t('auth.login_title')}</h2>
-                    <p style={{ 
+                    <p className={s.formSubtitle} style={{ 
                         fontSize: '22px', 
                         color: '#64748b', 
                         fontWeight: 500, 
@@ -227,8 +228,8 @@ const LoginPage = () => {
 
                     <form onSubmit={handleSubmit}>
                         {/* Email field */}
-                        <div style={{ marginBottom: '24px' }}>
-                            <label style={{ 
+                        <div className={s.inputGroup} style={{ marginBottom: '24px' }}>
+                            <label className={s.inputLabel} style={{ 
                                 display: 'block', 
                                 fontSize: '21px', 
                                 fontWeight: 800, 
@@ -236,8 +237,9 @@ const LoginPage = () => {
                                 marginBottom: '12px',
                                 fontFamily: "'DM Sans', sans-serif"
                             }}>{t('auth.email')}</label>
-                            <div style={{ position: 'relative' }}>
+                            <div className={s.inputWrapper} style={{ position: 'relative' }}>
                                 <Mail 
+                                    className={s.inputIcon}
                                     size={24} 
                                     style={{ 
                                         position: 'absolute', 
@@ -247,6 +249,7 @@ const LoginPage = () => {
                                     }} 
                                 />
                                 <input 
+                                    className={s.input}
                                     type="email" 
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -278,8 +281,8 @@ const LoginPage = () => {
                         </div>
 
                         {/* Password field */}
-                        <div style={{ marginBottom: '12px' }}>
-                            <label style={{ 
+                        <div className={s.inputGroup} style={{ marginBottom: '12px' }}>
+                            <label className={s.inputLabel} style={{ 
                                 display: 'block', 
                                 fontSize: '21px', 
                                 fontWeight: 800, 
@@ -287,8 +290,9 @@ const LoginPage = () => {
                                 marginBottom: '12px',
                                 fontFamily: "'DM Sans', sans-serif"
                             }}>{t('auth.password')}</label>
-                            <div style={{ position: 'relative' }}>
+                            <div className={s.inputWrapper} style={{ position: 'relative' }}>
                                 <LockKeyhole 
+                                    className={s.inputIcon}
                                     size={24} 
                                     style={{ 
                                         position: 'absolute', 
@@ -298,6 +302,7 @@ const LoginPage = () => {
                                     }} 
                                 />
                                 <input 
+                                    className={s.input}
                                     type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -326,6 +331,7 @@ const LoginPage = () => {
                                     }}
                                 />
                                 <div 
+                                    className={s.pwToggle}
                                     onClick={() => setShowPassword(!showPassword)}
                                     style={{ 
                                         position: 'absolute', 
@@ -343,16 +349,17 @@ const LoginPage = () => {
                         {/* Forgot Password Link */}
                         <div style={{ textAlign: 'right', marginBottom: '32px' }}>
                              <a href="#" style={{ 
-                                fontSize: '18px', 
-                                fontWeight: 700, 
-                                color: '#1a56db', 
-                                textDecoration: 'none',
-                                fontFamily: "'DM Sans', sans-serif"
-                            }}>{t('auth.forgot_password')}</a>
+                                 fontSize: '18px', 
+                                 fontWeight: 700, 
+                                 color: '#1a56db', 
+                                 textDecoration: 'none',
+                                 fontFamily: "'DM Sans', sans-serif"
+                             }}>{t('auth.forgot_password')}</a>
                         </div>
 
                         {/* Submit Button */}
                         <button 
+                            className={s.submitBtn}
                             type="submit" 
                             disabled={loading}
                             style={{
@@ -400,7 +407,7 @@ const LoginPage = () => {
                     </form>
 
                     {/* Sign up link row */}
-                     <div style={{ textAlign: 'center', marginTop: '32px' }}>
+                     <div className={s.switchLink} style={{ textAlign: 'center', marginTop: '32px' }}>
                         <span style={{ color: '#64748b', fontSize: '20px', fontFamily: "'DM Sans', sans-serif" }}>{t('auth.no_account')} </span>
                         <span 
                             onClick={() => navigate('/signup')}

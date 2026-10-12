@@ -1,0 +1,263 @@
+/**
+ * LoginPage.module.css
+ * Styles for pages/LoginPage.js.
+ * Replaces the inline styles on the two-column login layout.
+ */
+
+@import '../styles/tokens.css';
+
+.page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--color-surface);
+  font-family: var(--font-body);
+  overflow: hidden;
+}
+
+/* ── Left panel ──────────────────────────────────────────────────────────── */
+.leftPanel {
+  flex: 1;
+  background: linear-gradient(160deg,
+    var(--color-primary-dark) 0%,
+    var(--color-primary)      60%,
+    var(--color-primary-mid)  100%);
+  padding: var(--space-12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #fff;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.brandIcon {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.brandName {
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  font-family: var(--font-display);
+  letter-spacing: -1px;
+}
+
+.heroText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--space-12) 0;
+}
+
+.heroHeadline {
+  font-size: var(--text-hero);
+  font-weight: 900;
+  font-family: var(--font-display);
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: var(--space-6);
+}
+
+.heroSub {
+  font-size: var(--text-lg);
+  opacity: 0.85;
+  max-width: 420px;
+  line-height: 1.6;
+}
+
+.featureList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-base);
+  opacity: 0.9;
+}
+
+.featureDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.60);
+  flex-shrink: 0;
+}
+
+/* ── Right panel ─────────────────────────────────────────────────────────── */
+.rightPanel {
+  width: 560px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12);
+  background: var(--color-surface);
+}
+
+.formCard {
+  width: 100%;
+  max-width: 440px;
+}
+
+.formTitle {
+  font-size: var(--text-2xl);
+  font-weight: 900;
+  font-family: var(--font-display);
+  color: var(--color-text-primary);
+  letter-spacing: -1px;
+  margin-bottom: var(--space-2);
+}
+
+.formSubtitle {
+  font-size: var(--text-base);
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-8);
+}
+
+.inputGroup {
+  margin-bottom: var(--space-5);
+}
+
+.inputLabel {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.3px;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 16px;
+  color: var(--color-text-faint);
+  pointer-events: none;
+  display: flex;
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px 14px 48px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-family: var(--font-body);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.input:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-ring);
+  background: var(--color-surface);
+}
+
+.pwToggle {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-faint);
+  display: flex;
+  padding: 4px;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-mid));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-md);
+  font-weight: 800;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-primary);
+  margin-top: var(--space-6);
+  letter-spacing: 0.2px;
+}
+
+.submitBtn:hover:not(:disabled) {
+  filter: brightness(1.05);
+  box-shadow: 0 12px 32px var(--color-primary-ring);
+  transform: translateY(-1px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.switchLink {
+  margin-top: var(--space-6);
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.switchLink a,
+.switchLink button {
+  color: var(--color-primary);
+  font-weight: 700;
+  text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+}
+
+.switchLink a:hover,
+.switchLink button:hover {
+  text-decoration: underline;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .leftPanel {
+    display: none !important;
+  }
+
+  .rightPanel {
+    width: 100% !important;
+    padding: var(--space-8) var(--space-5) !important;
+  }
+}
+
+@media (max-width: 375px) {
+  .rightPanel {
+    padding: var(--space-6) var(--space-4) !important;
+    align-items: flex-start !important;
+    padding-top: var(--space-10) !important;
+  }
+
+  .formTitle {
+    font-size: var(--text-xl) !important;
+  }
+}

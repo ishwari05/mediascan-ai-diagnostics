@@ -31,6 +31,7 @@ import {
 import { predictionsAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import s from './DashboardPage.module.css';
 
 const DashboardPage = () => {
     const { user } = useAuth();
@@ -133,7 +134,7 @@ const DashboardPage = () => {
     );
 
     return (
-        <div style={{ 
+        <div className={s.page} style={{ 
             width: '100%', margin: '0 auto', padding: '48px 5vw',
             animation: 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)'
         }}>
@@ -152,7 +153,7 @@ const DashboardPage = () => {
             </div>
 
             {/* Stat Cards Grid */}
-            <div style={{ 
+            <div className={s.statsGrid} style={{ 
                 display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
                 gap: '24px', marginBottom: '40px' 
             }}>
@@ -192,7 +193,7 @@ const DashboardPage = () => {
             </div>
 
             {/* Main Content Sections */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
+            <div className={s.mainGrid} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '32px' }}>
                 
                 {/* Detection Overview */}
                 <div style={{ 
@@ -332,7 +333,7 @@ const DashboardPage = () => {
                     </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+                <div className={s.riskProfileGrid} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
                     {['anemia', 'diabetes'].map((type) => (
                         <div key={type} style={{
                             padding: '32px', borderRadius: '24px', background: '#f8fafc',

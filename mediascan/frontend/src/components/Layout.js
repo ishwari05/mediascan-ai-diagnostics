@@ -19,6 +19,7 @@ import { predictionsAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import ChatWidget from './ChatWidget';
+import styles from './Layout.module.css';
 
 const Layout = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -98,9 +99,9 @@ const Layout = () => {
                     (location.pathname === '/admin' ? 'Admin Intelligence' : 'MediScan AI');
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
+    <div className={styles.shell} style={{ display: 'flex', minHeight: '100vh', background: '#f8fafc' }}>
       {/* Sidebar v3: Ultra-Wide Authority */}
-      <aside style={{ 
+      <aside className={styles.sidebar} style={{ 
         width: '420px', 
         height: '100vh', 
         position: 'fixed', 
@@ -206,7 +207,7 @@ const Layout = () => {
       </aside>
 
       {/* Fluid Main Content Area */}
-      <div style={{ 
+      <div className={styles.main} style={{ 
         marginLeft: '420px', 
         flex: 1, 
         minHeight: '100vh',
@@ -215,7 +216,7 @@ const Layout = () => {
         flexDirection: 'column'
       }}>
         {/* Transparent Modern Header */}
-        <header style={{ 
+        <header className={styles.header} style={{ 
           height: '112px', 
           background: 'rgba(255,255,255,0.85)', 
           backdropFilter: 'blur(16px)',
