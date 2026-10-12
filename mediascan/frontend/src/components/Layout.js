@@ -18,6 +18,7 @@ import {
 import { predictionsAPI } from '../utils/api';
 import { useAuth } from '../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import ChatWidget from './ChatWidget';
 
 const Layout = () => {
   const { user, logout, isAdmin } = useAuth();
@@ -386,6 +387,9 @@ const Layout = () => {
           <Outlet />
         </main>
       </div>
+
+      {/* Chatbot widget — only when authenticated */}
+      {user && <ChatWidget />}
 
       <style>{`
         @keyframes fadeIn {

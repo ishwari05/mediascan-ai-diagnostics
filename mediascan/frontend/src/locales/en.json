@@ -607,5 +607,16 @@
     "palm_analysis": "Palm Analysis",
     "retina_analysis": "Retina Analysis",
     "foot_analysis": "Foot Analysis"
+  },
+  "chatbot": {
+    "title": "MediScan Health Assistant",
+    "disclaimer": "General health information only, not a medical diagnosis.",
+    "placeholder": "Ask about your results, Anemia, Diabetes…",
+    "send": "Send",
+    "close": "Close chat",
+    "open": "Open health assistant",
+    "error": "Could not reach the assistant. Please try again.",
+    "typing": "Assistant is typing…",
+    "suggestions_loading": "Loading suggestions…"
   }
 }
