@@ -249,72 +249,30 @@ class Prediction(db.Model):
         
         return data
 
-def _is_sqlite(engine) -> bool:
-    return engine.dialect.name == "sqlite"
-
-
 def init_db(app):
     """
-    Initialise the database on startup.
-
-    Strategy:
-      - SQLite (local dev / CI): call db.create_all() so tests work without
-        running `flask db upgrade`.  We also apply lightweight ALTER TABLE
-        migrations for columns added after the initial release.
-      - PostgreSQL (production): skip create_all(); rely exclusively on
-        `flask db upgrade` (Alembic) to manage schema.  create_all() on an
-        already-running Postgres DB is a no-op when tables exist, but it
-        can mis-detect column differences and produce incorrect DDL.
+    Idempotent startup database initialization.
+    Schema management is handled by Flask-Migrate (Alembic).
+    Seeds the initial admin user if the users table exists and admin is missing.
     """
     with app.app_context():
-        if _is_sqlite(db.engine):
-            # ── SQLite only ────────────────────────────────────────────── #
-            db.create_all()
-
-            # Back-fill columns added after the initial schema
-            try:
-                columns = [c["name"] for c in inspect(db.engine).get_columns("predictions")]
-
-                if "model_type" not in columns:
-                    try:
-                        db.session.execute(
-                            text("ALTER TABLE predictions ADD COLUMN model_type VARCHAR(20) DEFAULT 'fusion'")
-                        )
-                        db.session.commit()
-                        logger.info("Migration: Added model_type column.")
-                    except Exception as e:
-                        db.session.rollback()
-                        logger.error("Migration error (model_type): %s", e)
-
-                if "status" not in columns:
-                    try:
-                        db.session.execute(
-                            text("ALTER TABLE predictions ADD COLUMN status VARCHAR(20) DEFAULT 'completed'")
-                        )
-                        db.session.commit()
-                        logger.info("Migration: Added status column.")
-                    except Exception as e:
-                        db.session.rollback()
-                        logger.error("Migration error (status): %s", e)
-            except Exception as e:
-                logger.error("Column inspection failed: %s", e)
-
-        # ── Both backends ──────────────────────────────────────────────── #
-        # Idempotent admin seeding: only insert if the row is absent.
         try:
-            admin = User.query.filter(
-                User.email == "admin@mediascan.ai"
-            ).first()
-            if not admin:
-                admin = User(
-                    name="Systems Administrator",
-                    email="admin@mediascan.ai",
-                    password_hash=hash_password("Admin@123"),
-                    role="admin",
-                )
-                db.session.add(admin)
-                db.session.commit()
-                logger.info("Admin user seeded: admin@mediascan.ai")
+            insp = inspect(db.engine)
+            if insp.has_table("users"):
+                admin = User.query.filter_by(email="admin@mediascan.ai").first()
+                if not admin:
+                    admin = User(
+                        name="Systems Administrator",
+                        email="admin@mediascan.ai",
+                        password_hash=hash_password("Admin@123"),
+                        role="admin",
+                        is_active=True
+                    )
+                    db.session.add(admin)
+                    db.session.commit()
+                    logger.info("Admin user seeded: admin@mediascan.ai")
+            else:
+                logger.info("Database tables not found yet. Run 'flask db upgrade' to apply migrations.")
         except Exception as e:
             db.session.rollback()
-            logger.error("Admin seeding failed: %s", e)
+            logger.warning(f"Database initialization/seeding skipped: {e}")

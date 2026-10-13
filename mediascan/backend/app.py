@@ -64,7 +64,7 @@ def create_app():
 
     # Paths
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-    app.config["MODELS_FOLDER"] = os.path.join(BASE_DIR, "models")
+    app.config["MODELS_FOLDER"] = os.getenv("MODEL_DIR", os.path.join(BASE_DIR, "models"))
     app.config["UPLOAD_FOLDER"] = os.path.join(BASE_DIR, "uploads")
     app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16 MB
 
