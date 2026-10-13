@@ -130,6 +130,51 @@ MediScan AI utilizes four professional-grade models trained on clinical datasets
 
 ---
 
+## 🗄️ Switching to Supabase / PostgreSQL
+
+MediScan AI supports local SQLite (default for offline dev & tests) and production PostgreSQL (hosted on Supabase) via SQLAlchemy and Flask-Migrate without relying on proprietary Supabase SDKs.
+
+### 1. Configure Connection
+Create `mediascan/backend/.env` (from `.env.example`) and set your Supabase Transaction Pooler URI:
+
+```bash
+# Transaction Pooler (Port 6543) - handles connection pooling and SSL automatically
+DATABASE_URL=postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres
+```
+
+> [!NOTE]
+> If `DATABASE_URL` starts with legacy `postgres://`, the backend automatically rewrites it to `postgresql://`. If `DATABASE_URL` is unset, the app safely defaults to local SQLite (`sqlite:///mediascan.db`).
+
+### 2. Apply Database Migrations
+Initialize the database tables on Supabase using Flask-Migrate (Alembic):
+
+```bash
+cd mediascan/backend
+FLASK_APP=app.py python3 -m flask db upgrade
+```
+
+### 3. Migrate Existing SQLite Data (Optional)
+If you have local scan records or users in SQLite you wish to copy over:
+
+```bash
+# Step A: Dry-run check (verifies connection and prints row counts without modifying DB)
+python3 scripts/migrate_sqlite_to_postgres.py
+
+# Step B: Live migration (inserts data preserving primary keys and resets sequence generators)
+python3 scripts/migrate_sqlite_to_postgres.py --confirm
+```
+
+### 4. Verify Connection
+Start the server and check the health endpoint:
+```bash
+python3 app.py
+# Query health endpoint
+curl http://localhost:5001/api/health
+# Response will include: "db_backend": "postgresql"
+```
+
+---
+
 ## 🔐 Administrative Access
 
 **Default Admin Credentials:**
