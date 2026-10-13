@@ -1,10 +1,10 @@
 """
-Tests for DATABASE_URL resolution logic introduced in the Supabase migration.
-These tests are pure-unit — no database connection is needed.
+Tests for DATABASE_URL resolution logic and engine options configuration.
 """
 
+import os
 import pytest
-from app import _resolve_database_url
+from app import _resolve_database_url, create_app
 
 
 class TestResolveDatabaseUrl:
@@ -50,3 +50,38 @@ class TestResolveDatabaseUrl:
         url, is_postgres = _resolve_database_url("")
         assert url == ""
         assert is_postgres is False
+
+
+class TestAppEngineOptions:
+    def test_sqlite_does_not_set_postgres_engine_options(self, monkeypatch):
+        monkeypatch.setenv("DATABASE_URL", "sqlite:///:memory:")
+        monkeypatch.setenv("SECRET_KEY", "test-secret")
+        monkeypatch.setenv("JWT_SECRET_KEY", "test-jwt-secret")
+        app = create_app()
+
+        assert app.config["SQLALCHEMY_DATABASE_URI"] == "sqlite:///:memory:"
+        engine_opts = app.config.get("SQLALCHEMY_ENGINE_OPTIONS", {})
+        assert "connect_args" not in engine_opts
+        assert "pool_recycle" not in engine_opts
+        assert "pool_pre_ping" not in engine_opts
+
+    def test_postgres_sets_engine_options(self, monkeypatch):
+        raw_pg = "postgres://postgres.ref:secret@db.supabase.co:6543/postgres"
+        monkeypatch.setenv("DATABASE_URL", raw_pg)
+        monkeypatch.setenv("SECRET_KEY", "test-secret")
+        monkeypatch.setenv("JWT_SECRET_KEY", "test-jwt-secret")
+        
+        # Prevent create_app from attempting network calls on mock Postgres URI
+        monkeypatch.setattr("database.init_db", lambda app: None)
+        monkeypatch.setattr("models.ai_models.model_manager.load_models", lambda path: None)
+
+        app = create_app()
+
+        assert app.config["SQLALCHEMY_DATABASE_URI"].startswith("postgresql://")
+        assert "SQLALCHEMY_ENGINE_OPTIONS" in app.config
+        opts = app.config["SQLALCHEMY_ENGINE_OPTIONS"]
+        assert opts["pool_pre_ping"] is True
+        assert opts["pool_recycle"] == 300
+        assert opts["pool_size"] == 5
+        assert opts["max_overflow"] == 5
+        assert opts["connect_args"] == {"sslmode": "require"}

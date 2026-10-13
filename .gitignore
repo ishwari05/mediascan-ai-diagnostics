@@ -6,10 +6,15 @@ __pycache__/
 
 # Environment & Logs
 .env
+.env.*
+!.env.example
 .DS_Store
 *.log
 mediascan/backend/uploads/
 tmp/
+instance/
+instance/*.db
+*.db
 
 # Build & Dist
 dist/

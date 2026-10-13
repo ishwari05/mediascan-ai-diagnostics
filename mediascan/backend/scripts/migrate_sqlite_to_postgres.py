@@ -2,30 +2,15 @@
 """
 migrate_sqlite_to_postgres.py
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Copy all data from the local SQLite database to a Supabase-hosted
-PostgreSQL database.
+Copies all rows from local SQLite (instance/mediascan.db) to Supabase-hosted
+PostgreSQL, preserving primary keys (ids) and resetting sequence generators.
 
-Usage
------
-    # Dry-run (default) — shows counts only, no writes
-    python scripts/migrate_sqlite_to_postgres.py
+Usage:
+  # Dry-run: shows table counts without modifying anything
+  python3 scripts/migrate_sqlite_to_postgres.py
 
-    # Live run — actually inserts/upserts data
-    python scripts/migrate_sqlite_to_postgres.py --confirm
-
-Requirements
-------------
-  DATABASE_URL must be set to the Supabase Postgres connection string.
-  The script reads LOCAL_DB_PATH (defaults to instance/mediascan.db).
-
-Safety guarantees
------------------
-  * Without --confirm the script exits after printing row counts.
-  * Users are upserted (email is the conflict key); existing rows keep
-    their passwords and roles.
-  * Predictions are inserted only if the (user_id, session_id) pair is
-    absent — no duplicate scans.
-  * The script never touches the SQLite file.
+  # Live run: executes data migration and resets sequences
+  python3 scripts/migrate_sqlite_to_postgres.py --confirm
 """
 
 import argparse
@@ -33,7 +18,6 @@ import os
 import sys
 from pathlib import Path
 
-# ── allow running from the repo root or from the scripts/ dir ──────────────── #
 SCRIPT_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = SCRIPT_DIR.parent
 sys.path.insert(0, str(BACKEND_DIR))
@@ -42,8 +26,8 @@ from dotenv import load_dotenv
 load_dotenv(BACKEND_DIR / ".env")
 
 
-def _resolve_url(url: str) -> str:
-    """Fix legacy postgres:// → postgresql:// scheme."""
+def resolve_database_url(url: str) -> str:
+    """Normalize legacy postgres:// scheme to postgresql:// for SQLAlchemy."""
     if url.startswith("postgres://"):
         return "postgresql://" + url[len("postgres://"):]
     return url
@@ -51,160 +35,177 @@ def _resolve_url(url: str) -> str:
 
 def get_sqlite_engine():
     from sqlalchemy import create_engine
-    local_db = os.getenv("LOCAL_DB_PATH", str(BACKEND_DIR / "instance" / "mediascan.db"))
-    if not Path(local_db).exists():
-        print(f"[ERROR] SQLite database not found: {local_db}")
+    candidates = [
+        os.getenv("LOCAL_DB_PATH"),
+        str(BACKEND_DIR / "instance" / "mediascan.db"),
+        str(BACKEND_DIR / "mediascan.db"),
+    ]
+    sqlite_path = None
+    for c in candidates:
+        if c and Path(c).is_file():
+            sqlite_path = c
+            break
+
+    if not sqlite_path:
+        print("[ERROR] SQLite source database not found in instance/mediascan.db or mediascan.db")
         sys.exit(1)
-    print(f"[INFO]  SQLite source : {local_db}")
-    return create_engine(f"sqlite:///{local_db}")
+
+    print(f"[INFO] Source SQLite: {sqlite_path}")
+    return create_engine(f"sqlite:///{sqlite_path}")
 
 
 def get_postgres_engine():
     from sqlalchemy import create_engine
-    raw = os.getenv("DATABASE_URL", "")
-    if not raw:
-        print("[ERROR] DATABASE_URL is not set.")
+    raw_url = os.getenv("DATABASE_URL", "").strip()
+    if not raw_url:
+        print("[ERROR] DATABASE_URL environment variable is not set.")
         sys.exit(1)
-    url = _resolve_url(raw)
-    if not url.startswith("postgresql://"):
-        print(f"[ERROR] DATABASE_URL does not look like a PostgreSQL URL: {raw}")
+
+    resolved_url = resolve_database_url(raw_url)
+    if not resolved_url.startswith("postgresql://"):
+        print(f"[ERROR] DATABASE_URL does not start with postgresql:// or postgres://: {raw_url}")
         sys.exit(1)
-    print(f"[INFO]  Postgres target: {url[:40]}…")
-    return create_engine(url, connect_args={"sslmode": "require"})
+
+    # Obfuscate credentials for terminal output
+    safe_display = resolved_url.split("@")[-1] if "@" in resolved_url else "configured-host"
+    print(f"[INFO] Target Postgres: ...@{safe_display}")
+    return create_engine(resolved_url, connect_args={"sslmode": "require"})
 
 
-def reflect_table(engine, table_name):
-    from sqlalchemy import MetaData, Table
+def reflect_table(engine, table_name: str):
+    from sqlalchemy import MetaData
     meta = MetaData()
     meta.reflect(bind=engine, only=[table_name])
     return meta.tables[table_name]
 
 
-def migrate(dry_run: bool):
+def migrate(confirm: bool):
     from sqlalchemy import select, text
 
-    src = get_sqlite_engine()
-    dst = get_postgres_engine()
+    src_engine = get_sqlite_engine()
+    dst_engine = get_postgres_engine()
 
-    # ── 1. Users ──────────────────────────────────────────────────────────── #
-    src_users = reflect_table(src, "users")
-    dst_users = reflect_table(dst, "users")
+    tables = ["users", "predictions"]  # Strict foreign key order
 
-    with src.connect() as s_conn:
-        rows = s_conn.execute(select(src_users)).fetchall()
+    # Pre-check row counts on both ends
+    print("\n" + "=" * 60)
+    print("  CURRENT DATABASE STATE")
+    print("=" * 60)
 
-    print(f"\n[INFO]  Users to migrate  : {len(rows)}")
-    if dry_run:
-        print("[DRY-RUN] Skipping write.  Pass --confirm to execute.")
-    else:
-        with dst.begin() as d_conn:
-            inserted = updated = 0
+    src_counts = {}
+    dst_counts = {}
+
+    with src_engine.connect() as s_conn:
+        for t in tables:
+            try:
+                count = s_conn.execute(text(f"SELECT COUNT(*) FROM {t}")).scalar()
+                src_counts[t] = count
+            except Exception as e:
+                print(f"[ERROR] Failed to query source table '{t}': {e}")
+                sys.exit(1)
+
+    with dst_engine.connect() as d_conn:
+        for t in tables:
+            try:
+                count = d_conn.execute(text(f"SELECT COUNT(*) FROM {t}")).scalar()
+                dst_counts[t] = count
+            except Exception as e:
+                print(f"[ERROR] Failed to query destination table '{t}': {e}")
+                print("[HINT] Did you run 'flask db upgrade' on PostgreSQL first?")
+                sys.exit(1)
+
+    for t in tables:
+        print(f"  Table: {t:<15} | SQLite: {src_counts[t]:<5} | PostgreSQL: {dst_counts[t]:<5}")
+
+    if not confirm:
+        print("=" * 60)
+        print("[DRY-RUN] No changes made. Pass '--confirm' to copy data.")
+        print("=" * 60)
+        return
+
+    print("\n" + "=" * 60)
+    print("  EXECUTING DATA MIGRATION (--confirm)")
+    print("=" * 60)
+
+    # Perform table-by-table migration preserving IDs
+    for table_name in tables:
+        src_table = reflect_table(src_engine, table_name)
+        dst_table = reflect_table(dst_engine, table_name)
+
+        with src_engine.connect() as s_conn:
+            rows = s_conn.execute(select(src_table)).fetchall()
+
+        print(f"\n[INFO] Migrating {len(rows)} records for table '{table_name}'...")
+
+        with dst_engine.begin() as d_conn:
+            inserted = 0
+            updated = 0
             for row in rows:
                 row_dict = dict(row._mapping)
-                # Check for existing user
+                row_id = row_dict.get("id")
+
+                # Check if row with this ID already exists in target
                 existing = d_conn.execute(
-                    dst_users.select().where(dst_users.c.email == row_dict["email"])
+                    dst_table.select().where(dst_table.c.id == row_id)
                 ).fetchone()
+
                 if existing:
-                    # Update mutable fields; keep password & role intact
+                    # Update without changing ID
+                    update_values = {k: v for k, v in row_dict.items() if k != "id"}
                     d_conn.execute(
-                        dst_users.update()
-                        .where(dst_users.c.email == row_dict["email"])
-                        .values(
-                            name=row_dict.get("name"),
-                            age=row_dict.get("age"),
-                            gender=row_dict.get("gender"),
-                            phone=row_dict.get("phone"),
-                            last_login=row_dict.get("last_login"),
-                            is_active=row_dict.get("is_active", True),
-                        )
+                        dst_table.update().where(dst_table.c.id == row_id).values(**update_values)
                     )
                     updated += 1
                 else:
-                    # Strip id so Postgres SERIAL assigns a fresh one
-                    row_dict.pop("id", None)
-                    d_conn.execute(dst_users.insert().values(**row_dict))
+                    # Insert preserving explicit ID
+                    d_conn.execute(dst_table.insert().values(**row_dict))
                     inserted += 1
-        print(f"[OK]    Users  — inserted: {inserted}, updated: {updated}")
 
-    # Build email→new_id map for remapping foreign keys
-    with dst.connect() as d_conn:
-        email_to_id = {
-            r.email: r.id
-            for r in d_conn.execute(dst_users.select()).fetchall()
-        }
+            # Reset Postgres sequence for SERIAL primary key to max(id)
+            try:
+                max_id = d_conn.execute(text(f"SELECT COALESCE(MAX(id), 0) FROM {table_name}")).scalar()
+                if max_id > 0:
+                    d_conn.execute(
+                        text(f"SELECT setval(pg_get_serial_sequence('{table_name}', 'id'), :max_id, true)"),
+                        {"max_id": max_id}
+                    )
+                    print(f"  → Reset sequence for '{table_name}' to max(id) = {max_id}")
+            except Exception as seq_err:
+                print(f"  [WARN] Could not reset sequence for '{table_name}': {seq_err}")
 
-    # ── 2. Predictions ────────────────────────────────────────────────────── #
-    src_preds = reflect_table(src, "predictions")
-    dst_preds = reflect_table(dst, "predictions")
+            print(f"  → Completed '{table_name}': {inserted} inserted, {updated} updated.")
 
-    with src.connect() as s_conn:
-        pred_rows = s_conn.execute(select(src_preds)).fetchall()
+    # Verification: compare source and target row counts
+    print("\n" + "=" * 60)
+    print("  VERIFYING ROW COUNTS")
+    print("=" * 60)
 
-    print(f"[INFO]  Predictions to migrate: {len(pred_rows)}")
-    if dry_run:
-        print("[DRY-RUN] Skipping write.  Pass --confirm to execute.")
-        return
+    mismatch = False
+    with dst_engine.connect() as d_conn:
+        for t in tables:
+            final_dst = d_conn.execute(text(f"SELECT COUNT(*) FROM {t}")).scalar()
+            src_c = src_counts[t]
+            match_status = "OK" if final_dst == src_c else "MISMATCH"
+            print(f"  {t:<15} | Source: {src_c:<5} | Target: {final_dst:<5} [{match_status}]")
+            if final_dst != src_c:
+                mismatch = True
 
-    with dst.begin() as d_conn:
-        inserted = skipped = 0
-        for row in pred_rows:
-            row_dict = dict(row._mapping)
+    if mismatch:
+        print("\n[ERROR] Migration completed with row count mismatch between SQLite and PostgreSQL.")
+        sys.exit(1)
 
-            # Remap user_id to the new Postgres id
-            src_user_email = None
-            with src.connect() as s_conn2:
-                u = s_conn2.execute(
-                    src_users.select().where(src_users.c.id == row_dict["user_id"])
-                ).fetchone()
-                if u:
-                    src_user_email = u.email
-
-            new_uid = email_to_id.get(src_user_email) if src_user_email else None
-            if not new_uid:
-                print(f"[WARN]  Skipping prediction id={row_dict['id']}: user not found in Postgres")
-                skipped += 1
-                continue
-
-            row_dict["user_id"] = new_uid
-            row_dict.pop("id", None)  # let Postgres assign PK
-
-            # Skip if already present (idempotency)
-            existing = d_conn.execute(
-                dst_preds.select().where(
-                    (dst_preds.c.user_id == new_uid)
-                    & (dst_preds.c.session_id == row_dict["session_id"])
-                )
-            ).fetchone()
-
-            if existing:
-                skipped += 1
-                continue
-
-            d_conn.execute(dst_preds.insert().values(**row_dict))
-            inserted += 1
-
-    print(f"[OK]    Predictions — inserted: {inserted}, skipped/duplicate: {skipped}")
-    print("\n[DONE] Migration complete.")
+    print("\n[SUCCESS] Migration verified! All row counts match exactly and sequences reset.")
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Migrate MediScan SQLite → Supabase Postgres")
+    parser = argparse.ArgumentParser(description="Migrate MediScan SQLite to Supabase PostgreSQL")
     parser.add_argument(
         "--confirm",
         action="store_true",
-        help="Actually write data (omit for a dry-run that only prints counts)",
+        help="Apply data migration. Without this flag, only row counts are printed (dry run).",
     )
     args = parser.parse_args()
-
-    dry_run = not args.confirm
-    if dry_run:
-        print("=" * 60)
-        print("  DRY-RUN mode — no data will be written")
-        print("  Re-run with --confirm to execute the migration")
-        print("=" * 60)
-
-    migrate(dry_run=dry_run)
+    migrate(confirm=args.confirm)
 
 
 if __name__ == "__main__":
