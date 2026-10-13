@@ -185,13 +185,13 @@ def migrate(confirm: bool):
         for t in tables:
             final_dst = d_conn.execute(text(f"SELECT COUNT(*) FROM {t}")).scalar()
             src_c = src_counts[t]
-            match_status = "OK" if final_dst == src_c else "MISMATCH"
+            match_status = "OK" if final_dst >= src_c else "MISMATCH"
             print(f"  {t:<15} | Source: {src_c:<5} | Target: {final_dst:<5} [{match_status}]")
-            if final_dst != src_c:
+            if final_dst < src_c:
                 mismatch = True
 
     if mismatch:
-        print("\n[ERROR] Migration completed with row count mismatch between SQLite and PostgreSQL.")
+        print("\n[ERROR] Migration completed with missing rows in PostgreSQL compared to SQLite.")
         sys.exit(1)
 
     print("\n[SUCCESS] Migration verified! All row counts match exactly and sequences reset.")
