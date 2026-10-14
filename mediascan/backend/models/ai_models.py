@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import logging
+import threading
 from PIL import Image, ImageDraw
 import json
 import torch
@@ -121,45 +122,82 @@ def validate_image(image_path):
         return False, str(e)
 
 # ─── GradCAM (PyTorch Implementation) ─────────────────────────────────────────
+_gradcam_lock = threading.Lock()
+
 class GradCAM:
     def __init__(self, model, target_layer):
         self.model = model
         self.target_layer = target_layer
         self.gradients = None
         self.activations = None
-        self.hook_layers()
+        self.handles = []
 
     def hook_layers(self):
+        self.remove_hooks()
         def forward_hook(module, input, output):
             self.activations = output
         def backward_hook(module, grad_input, grad_output):
             self.gradients = grad_output[0]
         
-        self.target_layer.register_forward_hook(forward_hook)
-        self.target_layer.register_full_backward_hook(backward_hook)
+        h_f = self.target_layer.register_forward_hook(forward_hook)
+        h_b = self.target_layer.register_full_backward_hook(backward_hook)
+        self.handles = [h_f, h_b]
+
+    def remove_hooks(self):
+        for h in self.handles:
+            try:
+                h.remove()
+            except Exception:
+                pass
+        self.handles = []
+        self.gradients = None
+        self.activations = None
+
+    def __enter__(self):
+        self.hook_layers()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.remove_hooks()
 
     def generate(self, input_tensor, class_idx=None):
-        self.model.zero_grad()
-        output = self.model(input_tensor)
-        if class_idx is None:
-            class_idx = torch.argmax(output)
-        
-        output[0, class_idx].backward()
-        
-        gradients = self.gradients.cpu().data.numpy()[0]
-        activations = self.activations.cpu().data.numpy()[0]
-        
-        weights = np.mean(gradients, axis=(1, 2))
-        cam = np.zeros(activations.shape[1:], dtype=np.float32)
-        
-        for i, w in enumerate(weights):
-            cam += w * activations[i, :, :]
+        need_cleanup = False
+        if not self.handles:
+            self.hook_layers()
+            need_cleanup = True
+        try:
+            self.model.zero_grad()
+            with torch.enable_grad():
+                output = self.model(input_tensor)
+                if class_idx is None:
+                    class_idx = torch.argmax(output)
+                
+                output[0, class_idx].backward()
             
-        cam = np.maximum(cam, 0)
-        cam = cv2.resize(cam, IMG_SIZE)
-        cam = cam - np.min(cam)
-        cam = cam / (np.max(cam) + 1e-10)
-        return cam
+            if self.gradients is None or self.activations is None:
+                raise RuntimeError("GradCAM hooks failed to capture gradients/activations.")
+
+            gradients = self.gradients.detach().cpu().data.numpy()[0]
+            activations = self.activations.detach().cpu().data.numpy()[0]
+            
+            weights = np.mean(gradients, axis=(1, 2))
+            cam = np.zeros(activations.shape[1:], dtype=np.float32)
+            
+            for i, w in enumerate(weights):
+                cam += w * activations[i, :, :]
+                
+            cam = np.maximum(cam, 0)
+            cam = cv2.resize(cam, IMG_SIZE)
+            cam = cam - np.min(cam)
+            cam = cam / (np.max(cam) + 1e-10)
+            return cam
+        finally:
+            self.model.zero_grad()
+            if need_cleanup:
+                self.remove_hooks()
+            else:
+                self.gradients = None
+                self.activations = None
 
 def generate_gradcam(model, input_tensor, image_path, output_path, model_type):
     try:
@@ -168,8 +206,9 @@ def generate_gradcam(model, input_tensor, image_path, output_path, model_type):
         else: # MobileNet
             target_layer = model.features[-1]
             
-        cam_gen = GradCAM(model, target_layer)
-        heatmap = cam_gen.generate(input_tensor)
+        with _gradcam_lock:
+            with GradCAM(model, target_layer) as cam_gen:
+                heatmap = cam_gen.generate(input_tensor)
         
         img = cv2.imread(image_path)
         img = cv2.resize(img, IMG_SIZE)

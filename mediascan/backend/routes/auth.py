@@ -9,7 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import re
 
-from database import db, User
+from database import db, User, hash_password
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -52,7 +52,7 @@ def signup():
         new_user = User(
             name=name,
             email=email,
-            password_hash=generate_password_hash(password),
+            password_hash=hash_password(password),
             age=age_val,
             gender=gender,
             phone=phone
@@ -130,7 +130,7 @@ def update_profile():
     if 'password' in data and data['password']:
         if len(data['password']) < 6:
             return jsonify({'error': 'Password must be at least 6 characters'}), 400
-        user.password_hash = generate_password_hash(data['password'])
+        user.password_hash = hash_password(data['password'])
         
     db.session.commit()
     return jsonify({'message': 'Profile updated successfully', 'user': user.to_dict()}), 200

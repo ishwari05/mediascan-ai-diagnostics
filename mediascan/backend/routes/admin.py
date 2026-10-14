@@ -29,7 +29,7 @@ def get_admin_stats():
     
     anemia_cases = Prediction.query.filter_by(anemia_result='Anemic').count()
     diabetes_cases = Prediction.query.filter_by(diabetes_result='Diabetic').count()
-    dfu_cases = Prediction.query.filter_by(dfu_result='dfu_present').count()
+    dfu_cases = Prediction.query.filter(Prediction.dfu_result.ilike('%abnormal%')).count()
     high_risk = Prediction.query.filter_by(overall_risk='High').count()
     
     # Recent activity (last 7 days)
